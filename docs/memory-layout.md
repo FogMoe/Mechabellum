@@ -1,13 +1,13 @@
 # 实时对局内存布局
 
-实时读取代码位于 `data-collector/src/Mechabellum.ObserverStats/ObserverMemorySource.cs`，所有访问均通过 Windows `ReadProcessMemory` 完成。句柄只申请：
+实时采集由 `src/mechabellum/collector/memory/` 实现。`windows_process.py` 封装进程与模块枚举、`OpenProcess`、`ReadProcessMemory` 和 `CloseHandle`；`il2cpp_reader.py` 读取指针、值类型、字符串、列表和类型信息；`layouts.py` 保存构建绑定的地址与字段偏移；`live_source.py` 将对象图转换为 `MatchSnapshot v1`。
+
+进程句柄使用以下权限：
 
 - `PROCESS_VM_READ` (`0x0010`)
 - `PROCESS_QUERY_INFORMATION` (`0x0400`)
 
-不申请写入、创建线程、挂起进程或调试权限。
-
-## 已适配版本
+## 支持版本
 
 | 项目 | 值 |
 | --- | --- |
@@ -16,18 +16,18 @@
 | `GameAssembly.dll` SHA256 | `0FE278BC3A1DD6FF55A51DB2807CCD73ED16A1FE390FE72FFA013F0AEFF495F1` |
 | `MatchClient` 类型全局 RVA | `0x3C799F8` |
 
-2026-07-11 已在实际 `WatchMatch` 中完成端到端验证：双方名称、回合、单位 ID、编队数量、等级、经验、坐标、朝向、补给、核心值和上一回合胜负均能随观战进度更新，并与画面一致。
+该布局已在实际 `WatchMatch` 中验证双方名称、回合、单位 ID、编队数量、等级、经验、坐标、朝向、补给、核心值和上一回合胜负。
 
-入口链：
+## 根对象
 
 ```text
 GameAssembly + 0x3C799F8
-  -> MatchClient Il2CppClass
-  -> static_fields (+0xB8)
-  -> MatchClient.Current (+0x08)
+  → MatchClient Il2CppClass
+  → static_fields (+0xB8)
+  → MatchClient.Current (+0x08)
 ```
 
-`live` 读取 `MatchClient.Current` 的 IL2CPP 类型名用于诊断，并在基类字段布局有效时读取部署。
+`live-probe` 会验证模块哈希、根类型和当前对局对象。大厅中 `MatchClient.Current` 为空；进入可读取的观战或对局后，`live` 从其基类字段读取部署状态。
 
 ## 主要字段
 
@@ -61,11 +61,13 @@ GameAssembly + 0x3C799F8
 | `MechTeam` | `expFloat` (`FPoint Q32.32`) | `0x38` |
 | `MechTeam` | `roundCount` | `0x50` |
 
-## 更新规则
+## 构建更新
 
-游戏补丁改变 SHA256 后，使用对应版本的 IL2CPP 元数据确认类型和字段，并同步更新布局与哈希。至少验证：
+`LiveMemorySource.attach()` 会计算 `GameAssembly.dll` SHA256，并只选择完全匹配的布局。适配新构建时，在 `layouts.py` 增加独立布局记录并完成以下验证：
 
-1. `live-probe` 的根类型是 `MatchClient`；
-2. 大厅中 `Current` 为空；
-3. 至少分别在观战和目标对局类型中验证双方名称、编队数、单位 ID、等级和坐标与画面一致；
-4. 同一局 `.grbr` 的最终快照与实时最后一次输出一致。
+1. `mecha live-probe` 返回 `MatchClient` 根类型和目标布局；
+2. 大厅中的 `Current` 状态为空；
+3. 在观战中核对双方名称、编队数、单位 ID、等级、经济和坐标；
+4. 连续回合的阶段与部署变化能够稳定读取；
+5. 同一对局回放的最终快照与实时输出字段一致；
+6. 内存单元测试和实时集成测试全部通过。

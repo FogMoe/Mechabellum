@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mechabellum-analytics.local/contracts/match-snapshot/v1/schema.json",
+  "title": "MatchSnapshotV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "gameBuild", "source", "match", "players"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "gameBuild": { "$ref": "#/$defs/gameBuild" },
+    "source": { "$ref": "#/$defs/source" },
+    "match": { "$ref": "#/$defs/match" },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/player" }
+    },
+    "outcome": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/outcome" }
+      ]
+    }
+  },
+  "$defs": {
+    "nullableString": { "type": ["string", "null"] },
+    "nullableInteger": { "type": ["integer", "null"] },
+    "gameBuild": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["replayVersion", "gameVersion", "gameAssemblySha256"],
+      "properties": {
+        "replayVersion": { "$ref": "#/$defs/nullableInteger" },
+        "gameVersion": { "$ref": "#/$defs/nullableString" },
+        "gameAssemblySha256": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^[0-9A-Fa-f]{64}$" }
+          ]
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "uri", "capturedAtUtc"],
+      "properties": {
+        "type": { "enum": ["replay", "memory"] },
+        "uri": { "type": "string", "minLength": 1 },
+        "capturedAtUtc": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "format": "date-time" }
+          ]
+        }
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["battleId", "mapId", "gameMode", "matchMode", "round", "phase"],
+      "properties": {
+        "battleId": { "$ref": "#/$defs/nullableString" },
+        "mapId": { "$ref": "#/$defs/nullableInteger" },
+        "gameMode": { "$ref": "#/$defs/nullableString" },
+        "matchMode": { "$ref": "#/$defs/nullableString" },
+        "round": { "type": "integer", "minimum": 0 },
+        "phase": {
+          "enum": ["opening", "deploying", "deploy_over", "battle_start", "fighting", "fight_over", "unknown"]
+        }
+      }
+    },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "name", "team", "state", "supply", "reactorCore", "previousFightResult", "units", "activeTechnologies"],
+      "properties": {
+        "playerId": { "$ref": "#/$defs/nullableString" },
+        "name": { "type": "string" },
+        "team": { "$ref": "#/$defs/nullableInteger" },
+        "state": { "$ref": "#/$defs/nullableString" },
+        "supply": { "$ref": "#/$defs/nullableInteger" },
+        "reactorCore": { "$ref": "#/$defs/nullableInteger" },
+        "previousFightResult": { "$ref": "#/$defs/nullableString" },
+        "units": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/unit" }
+        },
+        "activeTechnologies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/unitTechnologySet" }
+        }
+      }
+    },
+    "unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitId", "unitName", "formationIndex", "rawLevel", "displayLevel", "experience", "x", "y", "isRotated", "equipmentId", "sellSupply", "roundCount", "durability"],
+      "properties": {
+        "unitId": { "type": "integer", "minimum": 1 },
+        "unitName": { "type": "string" },
+        "formationIndex": { "type": "integer" },
+        "rawLevel": { "type": "integer", "minimum": 0 },
+        "displayLevel": { "type": "integer", "minimum": 1 },
+        "experience": { "type": "integer", "minimum": 0 },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "isRotated": { "type": "boolean" },
+        "equipmentId": { "type": "integer" },
+        "sellSupply": { "type": "integer" },
+        "roundCount": { "type": "integer" },
+        "durability": { "type": "integer" }
+      }
+    },
+    "unitTechnologySet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitId", "unitName", "technologyIds"],
+      "properties": {
+        "unitId": { "type": "integer", "minimum": 1 },
+        "unitName": { "type": "string" },
+        "technologyIds": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["winnerIndex", "winnerPlayerId", "winnerName"],
+      "properties": {
+        "winnerIndex": { "type": "integer", "minimum": 0 },
+        "winnerPlayerId": { "$ref": "#/$defs/nullableString" },
+        "winnerName": { "$ref": "#/$defs/nullableString" }
+      }
+    }
+  }
+}

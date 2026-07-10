@@ -1,0 +1,41 @@
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any
+
+from ..datasets import load_training_snapshots
+from .predictor import load_artifact, predict_snapshot
+
+
+def render_timeline(dataset_path: Path, model_path: Path, battle_id: str | None = None) -> dict[str, Any]:
+    artifact = load_artifact(model_path)
+    snapshots = load_training_snapshots(dataset_path)
+    if not snapshots:
+        raise ValueError("数据集中没有可用训练快照。")
+    selected_battle_id = battle_id or snapshots[-1].match.battle_id
+    selected = sorted(
+        (snapshot for snapshot in snapshots if snapshot.match.battle_id == selected_battle_id),
+        key=lambda snapshot: snapshot.match.round,
+    )
+    if not selected:
+        raise ValueError(f"数据集中没有对局：{selected_battle_id}")
+    outcome = selected[-1].outcome
+    if outcome is None:
+        raise ValueError("所选对局没有最终胜者标签。")
+    rounds = []
+    for snapshot in selected:
+        prediction = predict_snapshot(artifact, snapshot, model_path)
+        rounds.append(
+            {
+                "round": snapshot.match.round,
+                "players": [
+                    {"name": item["name"], "winPercent": item["winPercent"]} for item in prediction["predictions"]
+                ],
+            }
+        )
+    return {
+        "battleId": selected_battle_id,
+        "snapshotPhase": "battle_start",
+        "finalWinner": outcome.winner_name,
+        "rounds": rounds,
+    }
