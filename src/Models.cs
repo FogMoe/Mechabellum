@@ -57,9 +57,9 @@ public sealed record ObservedPlayer(
     ulong? PlayerId,
     string Name,
     int? Team,
+    string? State,
     int? Supply,
     int? ReactorCore,
     string? PreviousFightResult,
     IReadOnlyList<UnitDeployment> Units,
     IReadOnlyList<UnitTechnologySet> ActiveTechnologies);
-

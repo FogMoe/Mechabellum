@@ -5,4 +5,8 @@ obj/
 *.user
 *.suo
 out/
-
+.venv/
+artifacts/
+data/
+__pycache__/
+*.pyc

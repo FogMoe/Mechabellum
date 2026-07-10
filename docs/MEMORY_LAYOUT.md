@@ -42,6 +42,7 @@ GameAssembly + 0x3C799F8
 | `PlayerController` | `teamController` | `0x130` |
 | `PlayerController` | `teamSystem` | `0x148` |
 | `Player` | `playerAgent` | `0xE0` |
+| `Player` | `State` | `0x108` |
 | `PlayerAgent` | `technologyManagers` | `0x100` |
 | `TeamSystem` | `teamControllers` | `0x28` |
 | `UnitManager` | `units` | `0x38` |

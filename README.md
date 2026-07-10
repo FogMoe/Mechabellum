@@ -71,3 +71,40 @@ dotnet run -- watch "C:\path\to\ProjectDatas\Replay" --json
 项目不包含写内存、注入、自动操作或网络拦截功能。
 
 布局、偏移来源和版本更新检查清单见 [`docs/MEMORY_LAYOUT.md`](docs/MEMORY_LAYOUT.md)。
+
+## 观战胜率基线模型
+
+`ml/` 提供一个可直接训练和实时推理的 1v1 基线。样本采用 `battle_start` 口径：回放中 `round >= 1` 的 `playerData` 是双方锁定后、该回合进入战斗的部署；`round 0` 的开局选择状态不会进入训练。模型从最终战斗报告生成胜者标签，按完整 `battleId` 划分训练/测试集，并使用双方核心、补给、单位、等级、经验、装备、科技和阵型聚合特征。特征全部采用双方差值，交换双方后预测概率也会交换。
+
+创建 Python 环境并训练：
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -r ml\requirements.txt
+.venv\Scripts\python ml\train.py `
+  --replay-dir "C:\path\to\ProjectDatas\Replay"
+```
+
+对当前观战局面预测：
+
+```powershell
+dotnet run -c Release -- live --json |
+  .venv\Scripts\python ml\predict.py
+```
+
+持续观战时，在双方进入 `Fighting` 的瞬间每回合输出一次最终胜率：
+
+```powershell
+dotnet run -c Release -- live-watch --json |
+  .venv\Scripts\python ml\watch.py
+```
+
+查看一场录像从第 1 回合到结束的最终胜率变化：
+
+```powershell
+.venv\Scripts\python ml\timeline.py "C:\path\to\match.grbr"
+```
+
+模型默认保存为 `artifacts/win_model.joblib`，同时生成包含整体及逐回合准确率、ROC AUC、Log Loss 和 Brier 分数的 JSON 报告。少量个人录像只能验证训练流程；在累积数千场同版本 1v1 并完成概率校准前，输出百分比不应视为可靠的真实胜率。
+
+后续数据收集、行动推荐和自博弈路线见 [`TODO.md`](TODO.md)。

@@ -26,6 +26,7 @@ public static class RoundSelector
                 player.PlayerId,
                 player.Name,
                 player.Team,
+                "BattleStart",
                 snapshot.Supply,
                 snapshot.ReactorCore,
                 snapshot.PreviousFightResult,
@@ -44,4 +45,3 @@ public static class RoundSelector
             players);
     }
 }
-

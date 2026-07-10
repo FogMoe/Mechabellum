@@ -28,5 +28,13 @@ public static class GameEnums
         2 => "Deuce",
         _ => $"FightResult#{value}"
     };
-}
 
+    public static string PlayerState(int value) => value switch
+    {
+        0 => "Deploying",
+        1 => "DeployOver",
+        2 => "Fighting",
+        3 => "FightOver",
+        _ => $"PlayerState#{value}"
+    };
+}

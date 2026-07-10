@@ -172,6 +172,7 @@ public sealed class ObserverMemorySource : IDisposable
             PlayerId: playerId,
             Name: name,
             Team: team,
+            State: GameEnums.PlayerState(_memory.ReadInt32(player + 0x108)),
             Supply: _memory.ReadInt32(player + 0xEC),
             ReactorCore: _memory.ReadInt32(player + 0x134),
             PreviousFightResult: GameEnums.FightResult(_memory.ReadInt32(player + 0x158)),

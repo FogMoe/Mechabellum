@@ -25,7 +25,7 @@ public static class ConsoleRenderer
         foreach (var player in observed.Players)
         {
             Console.WriteLine();
-            Console.WriteLine($"[{player.Name}] Team={player.Team?.ToString() ?? "?"}  编队数={player.Units.Count}  补给={player.Supply?.ToString() ?? "?"}  核心={player.ReactorCore?.ToString() ?? "?"}");
+            Console.WriteLine($"[{player.Name}] Team={player.Team?.ToString() ?? "?"}  状态={player.State ?? "?"}  编队数={player.Units.Count}  补给={player.Supply?.ToString() ?? "?"}  核心={player.ReactorCore?.ToString() ?? "?"}");
 
             foreach (var group in player.Units.GroupBy(unit => new { unit.UnitId, unit.UnitName }).OrderBy(group => group.Key.UnitId))
             {
