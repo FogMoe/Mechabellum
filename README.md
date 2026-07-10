@@ -111,3 +111,7 @@ Mechabellum/
 ```
 
 实时采集依赖已适配的游戏构建和 `GameAssembly.dll` 哈希。游戏更新后应先运行 `mecha live-probe`，并按内存布局文档完成版本校验。
+
+## 许可证
+
+本项目采用 [PolyForm Noncommercial License 1.0.0](LICENSE.md) 授权，仅允许许可证所定义的非商业用途。商业用途不在该许可证授权范围内。
