@@ -2,6 +2,25 @@
 
 Mechabellum 观战分析研究项目。它把 `.grbr` 回放解析、Windows 实时只读采集、版本化局面数据、数据集生成、模型训练和逐回合最终胜率推理整合在一个 Python 包中。
 
+## 参与公开回放募集
+
+> [!IMPORTANT]
+> 我们正在公开募集《Mechabellum》玩家自动保存的对局回放，用于扩充跨版本研究数据、改进解析器，
+> 以及训练和评估非商业游戏分析模型。
+
+在游戏中开启 `设置 → 其他 → 自动保存回放`，完成对局后即可在以下目录找到 `.grbr`：
+
+```text
+<Steam 游戏安装目录>\Mechabellum\ProjectDatas\Replay
+```
+
+将要贡献的 `.grbr` 压缩为 ZIP，然后前往
+**[上传对局回放](https://github.com/FogMoe/Mechabellum-Replays/issues/new?template=replay-upload.yml)**。
+系统会自动验证格式、识别版本、过滤明显伪装文件并按 SHA-256 去重。
+
+原始回放可能包含双方玩家名称、玩家 ID、对局 ID 和完整部署记录，提交前请阅读
+[回放募集仓库及数据政策](https://github.com/FogMoe/Mechabellum-Replays)。
+
 项目以 `MatchSnapshot v1` 作为正式数据边界：
 
 ```text
