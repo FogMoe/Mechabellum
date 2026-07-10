@@ -238,14 +238,14 @@ public static class Program
             Mechabellum Observer Stats
 
             用法:
-              dotnet run -- probe
-              dotnet run -- live-probe
-              dotnet run -- live [--json]
-              dotnet run -- live-watch [--interval 1000] [--json]
-              dotnet run -- latest [--round N] [--json]
-              dotnet run -- parse <file.grbr> [--round N] [--json]
-              dotnet run -- dump <file.grbr>
-              dotnet run -- watch [replay-directory] [--json]
+              mecha-observer probe
+              mecha-observer live-probe
+              mecha-observer live [--json]
+              mecha-observer live-watch [--interval 1000] [--json]
+              mecha-observer latest [--round N] [--json]
+              mecha-observer parse <file.grbr> [--round N] [--json]
+              mecha-observer dump <file.grbr>
+              mecha-observer watch [replay-directory] [--json]
 
             不带参数时等同于 latest。
             --json 输出适合程序消费的 JSON；watch 模式下输出 JSON Lines。

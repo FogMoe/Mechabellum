@@ -133,4 +133,3 @@ public sealed class ReplayParser
     private static string? ReadString(XElement? element) =>
         string.IsNullOrWhiteSpace(element?.Value) ? null : element.Value.Trim();
 }
-

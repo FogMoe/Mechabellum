@@ -41,4 +41,3 @@ public static class UnitCatalog
     public static string GetName(int unitId) =>
         Names.TryGetValue(unitId, out var name) ? name : $"Unknown / 未知单位 ({unitId})";
 }
-

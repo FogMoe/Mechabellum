@@ -1,6 +1,6 @@
 # 实时对局内存布局
 
-实时读取代码位于 `src/ObserverMemorySource.cs`，所有访问均通过 Windows `ReadProcessMemory` 完成。句柄只申请：
+实时读取代码位于 `data-collector/src/Mechabellum.ObserverStats/ObserverMemorySource.cs`，所有访问均通过 Windows `ReadProcessMemory` 完成。句柄只申请：
 
 - `PROCESS_VM_READ` (`0x0010`)
 - `PROCESS_QUERY_INFORMATION` (`0x0400`)
@@ -27,7 +27,7 @@ GameAssembly + 0x3C799F8
   -> MatchClient.Current (+0x08)
 ```
 
-读取当前对象的 IL2CPP 类型名用于诊断和输出，但不按具体对局类型设置白名单。只要 `MatchClient.Current` 存在且基类字段布局有效，`live` 就会尝试读取部署。
+`live` 读取 `MatchClient.Current` 的 IL2CPP 类型名用于诊断，并在基类字段布局有效时读取部署。
 
 ## 主要字段
 
@@ -63,7 +63,7 @@ GameAssembly + 0x3C799F8
 
 ## 更新规则
 
-游戏补丁改变 SHA256 后，先用对应版本的 IL2CPP 元数据重新确认类型和字段，再更新布局与哈希。不得仅替换哈希继续使用旧偏移。至少验证：
+游戏补丁改变 SHA256 后，使用对应版本的 IL2CPP 元数据确认类型和字段，并同步更新布局与哈希。至少验证：
 
 1. `live-probe` 的根类型是 `MatchClient`；
 2. 大厅中 `Current` 为空；

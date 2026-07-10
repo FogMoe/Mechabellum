@@ -49,4 +49,3 @@ public static class ReplayXmlExtractor
         return XDocument.Load(reader, LoadOptions.None);
     }
 }
-

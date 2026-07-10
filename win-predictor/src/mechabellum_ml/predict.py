@@ -8,7 +8,7 @@ from typing import Any
 
 import joblib
 
-from features import build_features, feature_names
+from .features import build_features, feature_names
 
 
 def main() -> int:

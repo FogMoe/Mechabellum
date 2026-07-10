@@ -14,8 +14,8 @@ from sklearn.model_selection import GroupKFold, GroupShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from features import build_features, feature_names
-from replays import load_training_match
+from .features import build_features, feature_names
+from .replays import load_training_match
 
 
 def main() -> int:

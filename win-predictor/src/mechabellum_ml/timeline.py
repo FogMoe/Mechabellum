@@ -7,8 +7,8 @@ from pathlib import Path
 
 import joblib
 
-from features import build_features, feature_names
-from replays import load_training_match
+from .features import build_features, feature_names
+from .replays import load_training_match
 
 
 def main() -> int:

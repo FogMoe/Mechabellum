@@ -7,8 +7,8 @@ from pathlib import Path
 
 import joblib
 
-from features import feature_names
-from predict import predict_snapshot
+from .features import feature_names
+from .predict import predict_snapshot
 
 
 def main() -> int:
